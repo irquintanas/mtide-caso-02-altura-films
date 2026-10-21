@@ -1,0 +1,7 @@
+caso:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: lakehouse/caso.duckdb    # relativo a donde se ejecuta dbt: la raíz del repositorio
+      threads: 1

@@ -1,0 +1,12 @@
+{
+ "num": 2,
+ "empresa": "Altura Films",
+ "subtitulo": "vídeo y fotografía con drones",
+ "contexto": "Altura Films quiere su parte de vuelos al día y sin tocarlo a mano. Además, la aseguradora pide pruebas de que no se vuela con viento fuerte, y el sistema de los drones ya registra despegues y aterrizajes.",
+ "preguntas": [
+  "¿Qué **tipo de encargo** deja menos ingreso por minuto de vuelo?",
+  "¿Qué **piloto** gasta más batería por minuto de vuelo?",
+  "¿Qué **dron** acumula más incidencias por cada 100 minutos de vuelo?",
+  "¿Qué dron tiene **más vuelos sin aterrizaje registrado** (en proporción)? ¿Coincide con el de la pregunta 3?"
+ ]
+}

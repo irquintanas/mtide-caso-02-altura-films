@@ -1,0 +1,14 @@
+_site/
+__pycache__/
+.venv/
+.DS_Store
+.ipynb_checkpoints/
+# resultados del lakehouse: los reconstruye dbt build
+lakehouse/plata/*
+lakehouse/oro/*
+!lakehouse/plata/.gitkeep
+!lakehouse/oro/.gitkeep
+lakehouse/caso.duckdb*
+dbt/target/
+dbt/logs/
+dbt/.user.yml

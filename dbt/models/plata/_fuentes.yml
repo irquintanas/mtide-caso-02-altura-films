@@ -1,0 +1,10 @@
+# Lo que hay en bronce, declarado para dbt. Lo reescribe herramientas/sistema_simulado.py cada vez que llegan datos.
+version: 2
+sources:
+  - name: bronce
+    description: "Lo que llega, tal cual. Nunca se modifica: los arreglos van en plata."
+    tables:
+      - name: parte
+        description: "El parte diario: una carpeta fecha_carga=AAAA-MM-DD por entrega"
+        meta:
+          external_location: "read_csv('lakehouse/bronce/parte/fecha_carga=*/*.csv', all_varchar = true, union_by_name = true, hive_partitioning = true, filename = true)"

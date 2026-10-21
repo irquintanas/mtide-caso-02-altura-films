@@ -1,0 +1,80 @@
+# Comprueba cada pull request y publica el portal en GitHub Pages en cada cambio de main.
+name: Comprobar y publicar
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:        # botón «Run workflow» de la pestaña Actions
+
+env:
+  TZ: Europe/Madrid
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  comprobar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Instalar dependencias (dbt y DuckDB)
+        run: pip install -r requirements.txt
+      - name: Construir y probar el lakehouse (dbt build)
+        run: dbt build --project-dir dbt --profiles-dir dbt
+      - name: Comprobar las páginas del portal
+        run: python web/build.py --check
+      - name: Construir el portal
+        run: python web/build.py
+      - name: Documentación del lakehouse (dbt docs, con el linaje)
+        if: github.event_name != 'pull_request'
+        run: |
+          dbt docs generate --static --project-dir dbt --profiles-dir dbt
+          mkdir -p _site/dbt-docs
+          cp dbt/target/static_index.html _site/dbt-docs/index.html
+      - name: Publicar plata y oro (Parquet) en la web
+        if: github.event_name != 'pull_request'
+        run: |
+          mkdir -p _site/lakehouse/plata _site/lakehouse/oro
+          cp lakehouse/plata/*.parquet _site/lakehouse/plata/ 2>/dev/null || true
+          cp lakehouse/oro/*.parquet _site/lakehouse/oro/ 2>/dev/null || true
+      - name: Guardar la web para publicarla
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+      # Los dos pasos siguientes se ejecutan también cuando un test falla: dejan el lakehouse a la vista
+      - name: Resumen del lakehouse
+        if: always()
+        run: python bi/resumen.py >> "$GITHUB_STEP_SUMMARY"
+      - name: Guardar el lakehouse de esta ejecución
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lakehouse-${{ github.event.pull_request.number || github.ref_name }}
+          path: |
+            lakehouse/plata/
+            lakehouse/oro/
+          if-no-files-found: warn
+
+  publicar:
+    # El repositorio de partida (el del profesor) solo comprueba: publica cada alumno en su propia cuenta
+    if: github.event_name != 'pull_request' && github.repository_owner != 'irquintanas'
+    needs: comprobar
+    runs-on: ubuntu-latest
+    concurrency:
+      group: pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.despliegue.outputs.page_url }}
+    steps:
+      - id: despliegue
+        uses: actions/deploy-pages@v4

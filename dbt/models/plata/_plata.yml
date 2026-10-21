@@ -1,0 +1,15 @@
+version: 2
+models:
+  - name: stg_parte
+    description: "El parte diario limpio, con las dos entregas"
+    columns:
+      - name: vuelo
+        data_tests: [unique, not_null]
+      - name: piloto
+        data_tests: [not_null]
+      - name: encargo
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ["boda", "inmobiliaria", "evento deportivo", "agricultura", "turismo", "publicidad", "inspección industrial", "festival"]
