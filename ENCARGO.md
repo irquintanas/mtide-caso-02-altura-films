@@ -24,6 +24,23 @@ cuenta lo que has hecho. Cómo preparar el repositorio y el ciclo de trabajo de 
 
 1. `python herramientas/sistema_simulado.py remesa`: llega una entrega nueva del parte en `bronce/parte/fecha_carga=2026-04-23/` (unos diez días más de vuelos).
 2. `dbt build --project-dir dbt --profiles-dir dbt`. Los pilotos estrenan una app que escribe la duración del vuelo «como la diría una persona». `dbt build` ni siquiera llega a los tests.
+
+   > 🔎 **Pista · mirar dentro antes de arreglar.** `dbt build` te dice *dónde* duele, no *por qué*.
+   > Para eso tienes `dbt show`: ejecuta una consulta y te enseña el resultado sin construir nada.
+   >
+   > ```bash
+   > dbt show --project-dir dbt --profiles-dir dbt --select <un_test>
+   > dbt show --project-dir dbt --profiles-dir dbt --inline "select ... from {{ ref('<modelo>') }} ..."
+   > dbt show --project-dir dbt --profiles-dir dbt --inline "select ... from {{ source('bronce', 'parte') }} ..."
+   > ```
+   >
+   > El primero te enseña las filas que un test rechaza. Los otros dos te dejan preguntar lo que quieras
+   > a plata o a bronce tal como llegó. Antes de tocar el SQL, intenta contestar tres preguntas:
+   > **¿qué filas?**, **¿desde cuándo?** y **¿venía ya así en bronce?** Bronce guarda cada entrega en su
+   > carpeta `fecha_carga=…`, y esa columna te deja comparar una entrega con otra.
+   >
+   > *Aquí el modelo ni se construye: no hay test que consultar y lo que haya en plata es de la ejecución anterior. Lee bien el mensaje de error (te dice la columna y el valor) y pregunta directamente a bronce cuántas filas son así y en qué entrega.*
+
 3. Arregla `dbt/models/plata/stg_parte.sql` hasta que `dbt build` quede en verde y el problema esté resuelto (no siempre hay un test que lo grite: a veces tienes que escribirlo tú). Deja un comentario en el SQL: **qué** venía mal y **por qué** lo arreglas así.
 4. Escribe `paginas/1-remesa.md`.
 5. Pull request en tu repositorio, Actions en verde y lo fusionas.
