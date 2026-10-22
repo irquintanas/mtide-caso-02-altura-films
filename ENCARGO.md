@@ -79,7 +79,27 @@ Crea en `dbt/models/oro/` estos modelos, **con estos nombres exactos** (el porta
 
 En un `_oro.yml`, sus tests: en las dimensiones, `unique` y `not_null`; en el hecho, `unique` en `vuelo` y `relationships` con cada dimensión.
 
+> 🔎 **Pista · los tests del oro.** `_oro.yml` tiene la misma forma que `dbt/models/plata/_plata.yml`:
+> una entrada por modelo y, dentro, sus columnas con sus `data_tests`. `unique` y `not_null` se escriben tal cual.
+> `relationships` necesita dos datos, igual que `accepted_values` necesita su lista: a qué modelo apunta y en qué
+> columna tiene que encontrar el valor. Escríbelos dentro de `arguments:`.
+>
+> Lanza `dbt build` completo: todo en verde y sin avisos. Después comprueba que los tests vigilan de verdad:
+> apunta un momento un `relationships` a la dimensión equivocada, mira cómo se pone rojo y déjalo como estaba.
+
 Escribe `paginas/2-oro.md`: tu estrella y las tres respuestas. Con la remesa nueva (un 25 % más de datos), ¿siguen saliendo las mismas que en la J3? Pull request, verde, fusionas.
+
+> 🔎 **Pista · la página.** Las reglas están en el README (*Las cifras de tus páginas*): borra la primera línea,
+> cambia cada `> ✏️` por tu texto y conserva las marcas `{{ … }}`, que son las que ponen las cifras.
+> Antes de subir:
+>
+> ```bash
+> python web/build.py --check    # te dice qué línea del guion queda o qué marca no tiene valor
+> python web/build.py            # genera el portal: abre _site/index.html
+> ```
+>
+> En la portada, las tres primeras preguntas tienen que haber dejado de estar en gris y la bitácora tiene que
+> marcar «2 · El oro» como escrita.
 
 ## Bloque 3 · Fuentes nuevas · rama `fuentes`
 
