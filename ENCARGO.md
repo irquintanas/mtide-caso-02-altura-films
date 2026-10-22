@@ -151,6 +151,16 @@ Escribe `paginas/2-oro.md`: tu estrella y las tres respuestas. Con la remesa nue
 
 Escribe `paginas/memo.md`: el memo para la dirección de Altura Films, con las cuatro respuestas citadas con marcas. La comprobación exige que existan `pregunta_1` a `pregunta_4`. Repasa el portal entero antes de fusionar.
 
+> 🔎 **Pista · el memo.** Escríbelo para alguien que no ha visto tu repositorio: frases cortas, sin SQL,
+> y los nombres técnicos solo en «Cómo se ha hecho». Cada afirmación lleva su cifra, y la cifra va siempre
+> con marca (`{{ pregunta_1.… }}`): si mañana llega otra remesa, el memo se actualiza solo. Una recomendación
+> sin dato todavía es una opinión. En «Qué no sabemos», sé concreto: qué supuesto has hecho (un umbral, una
+> regla de negocio) y qué dato podría cambiar la respuesta.
+>
+> Antes de fusionar, recorre todas las páginas de `_site/` como lo haría la dirección. Después de fusionar,
+> abre tu URL de GitHub Pages y comprueba que la bitácora está completa, que las cuatro preguntas tienen
+> respuesta y que funciona el enlace a la documentación de dbt («Cómo está montado»).
+
 ---
 
 ## Lo que se entrega
