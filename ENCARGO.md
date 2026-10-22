@@ -111,10 +111,41 @@ Escribe `paginas/2-oro.md`: tu estrella y las tres respuestas. Con la remesa nue
 | `bronce/eventos/eventos_vuelo_2026-04-25.json` | El sistema de los drones exporta un registro con un evento al despegar y otro al aterrizar. | evento_id, vuelo_id, dron, tipo (despegue / aterrizaje), ts |
 
 2. **El giro.** Hay vuelos que **despegan y nunca registran el aterrizaje** (batería agotada, señal perdida…). Un vuelo es un par de eventos: piensa cómo encontrar los que se quedan cojos.
+
+   > 🔎 **Pista · conoce el registro antes de modelarlo.** Un registro de eventos no es una tabla limpia:
+   > cada fila es algo que pasó, y una misma cosa (un pedido, un vuelo, un ticket…) puede ocupar varias filas.
+   > Antes de escribir `stg_eventos`, pregúntale a bronce con `dbt show --inline`, como en el bloque 1:
+   > ¿cuántas filas hay y cuántos identificadores distintos? ¿Qué tipos de evento hay y cuántos de cada?
+   > ¿Entre qué horas y qué valores se mueve? ¿Cómo se ve una misma cosa de principio a fin?
+   >
+   > Para resolver el giro casi siempre necesitarás una de estas dos herramientas de SQL:
+   > **agrupar** por la cosa que importa (`group by`, con `count(*) filter (where …)` o `min(…) filter (where …)`),
+   > o una **función de ventana** (`row_number()`, `lag()`… `over (partition by … order by …)`) para quedarte
+   > con una fila de cada grupo o comparar cada fila con la anterior. Cuál te sirve depende de tu giro.
+
 3. Modelos de plata: `stg_meteo_diaria` y `stg_eventos` (el registro lo lees con `source('bronce', 'eventos')`).
 4. **Test protagonista.** La normativa no permite volar con **rachas de más de 50 km/h**. Escribe un test singular que cruce el parte con la meteo y devuelva los vuelos hechos en esos días, con `severity: warn`: no es un error del dato, es un **hallazgo de negocio** que el build tiene que enseñar sin pararse. En el memo explica por qué lo has dejado en *warn*.
+
+   > 🔎 **Pista · el test protagonista.** Si es un test genérico (`unique`, `relationships`…), va en el `.yml`
+   > de plata, como los del bloque 2. Si es singular, es un `select` en `dbt/tests/` que devuelve las filas
+   > que **incumplen** la regla; si no devuelve nada, pasa. En esa carpeta tienes dos de ejemplo.
+   > Escríbelo **antes** de arreglar los datos y comprueba que se pone rojo: un test que nunca ha fallado
+   > no demuestra nada. Con `dbt show --select <tu_test>` ves qué filas lo hacen fallar.
+   >
+   > *En tu caso no se pone rojo sino en aviso (WARN): la severidad se configura dentro del propio test, con `config()` en su primera línea.*
+
 5. **Pregunta 4** (`dbt/models/oro/pregunta_4.sql`): ¿Qué dron tiene **más vuelos sin aterrizaje registrado** (en proporción)? ¿Coincide con el de la pregunta 3?
+
+   > 🔎 **Pista · la pregunta 4.** Cruza la fuente nueva con el registro o con tu oro. Antes de unirlos,
+   > decide **a qué nivel** contestas (una fila por zona, por impresora, por creador…) y lleva cada parte
+   > a ese nivel por separado; después las unes. Si unes dos tablas que tienen varias filas por cada zona,
+   > los números se multiplican. Mira el resultado con `dbt show --select pregunta_4`: ¿encaja con lo que
+   > viste al explorar el registro?
+
 6. Escribe `paginas/3-fuentes.md`. Pull request, verde, fusionas.
+
+   > 🔎 **Pista · la página.** Igual que en el bloque 2: `python web/build.py --check` y `python web/build.py`.
+   > Ahora es la cuarta pregunta de la portada la que tiene que dejar de estar en gris.
 
 ## Bloque 4 · El memo · rama `memo`
 
