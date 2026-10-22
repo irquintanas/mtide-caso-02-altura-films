@@ -59,6 +59,24 @@ Crea en `dbt/models/oro/` estos modelos, **con estos nombres exactos** (el porta
 | `pregunta_2` | ¿Qué **piloto** gasta más batería por minuto de vuelo? Una fila por `piloto`, con `piloto` en la primera columna y `wh_min` (Wh/min), de mayor a menor |
 | `pregunta_3` | ¿Qué **dron** acumula más incidencias por cada 100 minutos de vuelo? Una fila por `dron`, con `dron` en la primera columna y `incidencias_100min` (incidencias por 100 min), de mayor a menor |
 
+> 🔎 **Pista · un modelo, un fichero.** Cada modelo de la tabla es un fichero `.sql` en `dbt/models/oro/`
+> con su mismo nombre (`dim_encargo.sql`, `fact_vuelos.sql`…). Dentro va **un solo `select`**, sin
+> `create table`: dbt se encarga de guardarlo como Parquet en `lakehouse/oro/`. Las dimensiones y el hecho
+> leen de plata con `{{ ref('stg_parte') }}`; las preguntas leen del hecho con `{{ ref('fact_vuelos') }}`.
+> Así dbt sabe en qué orden construirlos.
+>
+> Ve de uno en uno: escribes el modelo, lo construyes solo a él y miras lo que ha salido.
+>
+> ```bash
+> dbt build --project-dir dbt --profiles-dir dbt --select dim_encargo
+> dbt show  --project-dir dbt --profiles-dir dbt --select dim_encargo
+> ```
+>
+> Antes de pasar al siguiente, comprueba que el resultado tiene sentido: ¿cuántas filas salen?
+> (`dbt show` enseña cinco; `--limit` te deja ver más, y en el bloque 1 ya viste cómo preguntar lo que quieras con `--inline`),
+> ¿hay alguna repetida o vacía?, ¿las columnas se llaman exactamente como pide la tabla? Para `_oro.yml`, toma como
+> plantilla `dbt/models/plata/_plata.yml`: ahí está la forma de escribir un test con `arguments:`.
+
 En un `_oro.yml`, sus tests: en las dimensiones, `unique` y `not_null`; en el hecho, `unique` en `vuelo` y `relationships` con cada dimensión.
 
 Escribe `paginas/2-oro.md`: tu estrella y las tres respuestas. Con la remesa nueva (un 25 % más de datos), ¿siguen saliendo las mismas que en la J3? Pull request, verde, fusionas.
