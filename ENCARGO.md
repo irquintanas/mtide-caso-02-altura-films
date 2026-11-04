@@ -161,10 +161,56 @@ Escribe `paginas/memo.md`: el memo para la dirección de Altura Films, con las c
 > abre tu URL de GitHub Pages y comprueba que la bitácora está completa, que las cuatro preguntas tienen
 > respuesta y que funciona el enlace a la documentación de dbt («Cómo está montado»).
 
+## Bloque 5 · La historia · rama `historia` (Jornada 7)
+
+Tu portal es ahora un **informe**: cifras correctas, pero nadie sabe qué hacer con ellas. En este bloque lo conviertes en
+una **historia** para la dirección de Altura Films, con los cuatro pasos de la J7: decidir, analizar, elegir los datos y construir
+el artefacto. Cuando `paginas/historia.md` deje de estar pendiente, será la portada de tu portal, y las páginas del
+lakehouse quedarán agrupadas y plegadas en el menú.
+
+1. `git switch -c historia`.
+2. **Paso 1 · Decidir.** En `paginas/historia-pasos.md`: tema → pregunta → decisión, con quién decide, para cuándo y qué
+   consecuencia tiene. La prueba: ¿qué hará distinto alguien después de leer tu portada?
+3. **Paso 2 · Analizar.** Explora tu oro con `dbt show`: el terreno (tus cifras tal cual), el disparador (lo que se sale de
+   lo normal) y el hallazgo en una frase, con su magnitud y su motivo.
+4. **Paso 3 · Elegir los datos.** Qué entra y qué queda fuera, y por qué. Las cifras que necesite tu titular y que no estén
+   ya en el oro van en modelos nuevos `dbt/models/oro/historia_*.sql`, con sus tests en `_oro.yml`.
+5. **Paso 4 · El artefacto.** `paginas/historia.md`: un titular que afirma con una cifra con marca, la conclusión primero,
+   uno o dos gráficos-mensaje, la propuesta con fecha, lo que no sabemos y tres titulares por audiencia.
+6. `python web/build.py --check` y `python web/build.py`; revisa `_site/index.html` con las cinco comprobaciones
+   (decisión, titular que afirma, fuente, evidencia diversa, lo que no cuadra). Pull request, verde, fusionas.
+
+> 🔎 **Pista · gráficos y cifras.** En cualquier página puedes dibujar un gráfico con los datos de tu oro, sin escribir
+> ninguna cifra a mano. Las barras empiezan siempre en cero y la fuente se escribe sola al pie:
+>
+> ````
+> ```grafico
+> titular: lo que el gráfico afirma (o describe, si es exploratorio)
+> modelo: pregunta_4
+> barras: columna_de_categorías → columna_numérica
+> destacar: la categoría protagonista
+> referencia: un número o modelo.columna · su etiqueta
+> ```
+> ````
+>
+> «destacar:», «referencia:», «solo:» (una lista de categorías), «orden: desc» y «leyenda:» son opcionales. Con dos columnas
+> numéricas («→ sin_limpiar, limpio») dibuja dos barras por categoría: sirve para el contraste. Y un bloque
+> ` ```cifras ` con líneas «cifra | qué es» dibuja tarjetas de cifras (el terreno del paso 2).
+
+> 🔎 **Pista · explorar antes de explicar.** Los gráficos del paso 2 son exploratorios: sin «destacar:» y con un título
+> que describe. Mira si a simple vista destaca algo y, si no, divide la cifra por lo que corresponde (por plaza, por hora,
+> por euro…): ahí suele aparecer el disparador. El gráfico de la portada es ese mismo convertido en gráfico-mensaje:
+> la protagonista destacada, el resto en gris y un titular que afirma. Y si tu bloque 3 tenía trampa, el contraste
+> «sin limpiar frente a limpio» demuestra que tu conclusión no sale de un error de datos.
+
+> 🔎 **Pista · el titular.** Léelo sin gráficos: si no dice qué hacer, todavía describe. «Pedidos por zona» describe;
+> «La zona norte necesita el doble de repartidores» afirma. `--check` exige que el titular lleve al menos una cifra con marca.
+
 ---
 
 ## Lo que se entrega
 
 - Tu repositorio en tu cuenta, con los cuatro pull requests fusionados y la última ejecución de `main` en verde.
 - Tu portal publicado, con sus cuatro páginas escritas, y tu `dbt-docs`.
+- Bloque 5 (J7): tu historia como portada del portal y la página «Cómo se construyó la historia».
 - La presentación oral (5 minutos): con tu portal en pantalla, el problema de calidad, tu test protagonista, las cuatro respuestas y tu recomendación.

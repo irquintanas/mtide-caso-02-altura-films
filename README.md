@@ -45,7 +45,7 @@ Necesitas una cuenta de GitHub, Git, Python 3.10 o superior y un editor (VS Code
 
 ```bash
 git switch main && git pull               # parte siempre de main actualizado
-git switch -c remesa                      # una rama por bloque: remesa, oro, fuentes, memo
+git switch -c remesa                      # una rama por bloque: remesa, oro, fuentes, memo, historia
 # … el trabajo del bloque: ENCARGO.md …
 dbt build --project-dir dbt --profiles-dir dbt     # hasta que todo esté en verde
 python web/build.py                                # comprueba tus páginas y genera el portal
@@ -85,6 +85,25 @@ Una página que empieza por `<!-- pendiente … -->` sale como «pendiente» y n
 borra esa línea y sustituye cada línea del guion (`> ✏️ …`) por tu texto. `python web/build.py` falla si queda alguna
 línea del guion o una marca sin valor, y GitHub hará lo mismo con tu pull request.
 
+## Gráficos y cifras (bloque 5)
+
+En cualquier página, un bloque `grafico` dibuja barras con los datos de un modelo, desde cero y con la fuente al pie:
+
+````markdown
+```grafico
+titular: [lo que afirma el gráfico]
+modelo: pregunta_4
+barras: [columna de categorías] → [columna numérica]
+destacar: [la categoría protagonista]
+referencia: [un número o modelo.columna] · [su etiqueta]
+```
+````
+
+Opcionales: `destacar:`, `referencia:` (un número o `modelo.columna`), `solo:` (lista de categorías), `orden: desc`
+y, con dos columnas, `leyenda:` (un nombre para cada una).
+Con dos columnas (`barras: categoría → sin_limpiar, limpio`) dibuja dos barras por categoría. Un bloque `cifras`
+con líneas `cifra | qué es` dibuja tarjetas; las cifras pueden ser marcas (`{{ stg_eventos.filas }} | eventos`).
+
 ## Si algo falla
 
 - **`Conversion Error` / `Could not convert`** en `dbt build`: un dato no tiene el formato esperado. Busca la fila en bronce y arréglalo en plata.
@@ -93,4 +112,5 @@ línea del guion o una marca sin valor, y GitHub hará lo mismo con tu pull requ
 - **`database is locked`**: tienes `lakehouse/caso.duckdb` abierto en otro programa. Ciérralo.
 - **Actions en rojo en «publicar» la primera vez**: no activaste Pages antes de subir. Actívalo y, en Actions, *Re-run jobs*.
 - **Actions en rojo y en tu portátil en verde**: te falta subir algún fichero nuevo (`git status`).
-- **El profesor ha corregido algo en el repositorio de partida**: `git pull profesor main`.
+- **El profesor ha añadido o corregido algo en el repositorio de partida**: con todo commiteado,
+  `git switch main`, `git pull --no-rebase --no-edit profesor main` y `git push origin main`.
