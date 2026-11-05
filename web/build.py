@@ -15,20 +15,9 @@ y que todas sus marcas tengan valor.
 
 Bloque 5 (la historia): paginas/historia.md pasa a ser la portada en cuanto deja de estar pendiente, y las
 páginas del ejercicio del lakehouse quedan agrupadas y plegadas. En cualquier página puedes usar dos bloques:
-
-    ```grafico                                   ```cifras
-    titular: lo que afirma (o describe) el gráfico   {{ stg_eventos.filas }} | eventos sin reenvíos
-    modelo: pregunta_4                            8 | zonas con aparcamiento
-    barras: zona → alquileres_por_plaza           ```
-    destacar: Estación          (opcional)
-    referencia: historia_estacion.resto_por_plaza · media del resto   (opcional: un número o modelo.columna)
-    solo: Playa, Estación       (opcional)
-    leyenda: sin limpiar, limpio (opcional, con dos columnas)
-    orden: desc                 (opcional: desc o asc; si no, el orden del modelo)
-    ```
-
-Las barras empiezan siempre en cero y la fuente se escribe sola al pie. Con dos columnas
-(«barras: zona → bruto, limpio») se dibujan dos barras por categoría.
+```grafico (cinco tipos: barras, linea, histograma, calor y eje; cómo se escribe cada uno, en web/graficos.py y en
+el README) y ```cifras (líneas «cifra | qué es»). Los gráficos leen los datos del lakehouse: ninguna cifra se
+escribe a mano.
 """
 import html
 import json
@@ -40,6 +29,9 @@ from datetime import datetime
 from pathlib import Path
 
 import duckdb
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import graficos  # noqa: E402  (los gráficos del portal, en web/graficos.py)
 
 RAIZ = Path(__file__).resolve().parent.parent
 CASO = json.loads((RAIZ / "web" / "caso.json").read_text(encoding="utf-8"))
@@ -131,128 +123,12 @@ def bloques(texto, tipo):
     return out
 
 
-def numero(v):
-    if isinstance(v, bool) or v is None:
-        return None
-    if isinstance(v, (int, float)):
-        return float(v)
-    try:
-        return float(v)
-    except (TypeError, ValueError):
-        return None
-
-
-def lista(t):
-    return [x.strip() for x in t.split(",") if x.strip()]
-
-
 def preparar_grafico(cuerpo):
-    """Lee un bloque ```grafico y lo resuelve contra el lakehouse. Devuelve (datos, errores)."""
-    conf = {}
-    for l in cuerpo:
-        if ":" in l and l.split(":", 1)[0].strip():
-            k, v = l.split(":", 1)
-            conf[k.strip().lower()] = v.strip()
-    errores = [f"falta «{k}:»" for k in ("titular", "modelo", "barras") if not conf.get(k)]
-    if errores:
-        return None, errores
-    barras = re.split(r"\s*(?:→|->)\s*", conf["barras"], maxsplit=1)
-    if len(barras) != 2 or not barras[0] or not barras[1]:
-        return None, ["«barras:» se escribe así: categoría → columna (o categoría → columna1, columna2)"]
-    cat, series = barras[0].strip(), lista(barras[1])
-    if len(series) > 2:
-        return None, ["«barras:» admite una o dos columnas numéricas"]
-    datos = leer(conf["modelo"])
-    if datos is None:
-        return None, [f"el modelo {conf['modelo']} no existe (¿has ejecutado dbt build?)"]
-    cols, filas = datos
-    faltan = [c for c in [cat] + series if c not in cols]
-    if faltan:
-        return None, [f"{conf['modelo']} no tiene la columna {', '.join(faltan)} (tiene: {', '.join(cols)})"]
-    puntos, vacias = [], 0
-    for f in filas:
-        crudos = [f[cols.index(c)] for c in series]
-        if any(v is None for v in crudos):
-            vacias += 1                    # una fila sin valor no se dibuja: se cuenta al pie
-            continue
-        valores = [numero(v) for v in crudos]
-        if any(v is None for v in valores):
-            return None, [f"{conf['modelo']}: la columna {', '.join(series)} tiene valores que no son números"]
-        puntos.append((formato(f[cols.index(cat)]), valores))
-    if conf.get("solo"):
-        quiero = lista(conf["solo"])
-        fuera = [x for x in quiero if x not in [p[0] for p in puntos]]
-        if fuera:
-            return None, [f"«solo:» nombra {', '.join(fuera)}, que no está en la columna {cat}"]
-        puntos = [p for p in puntos if p[0] in quiero]
-    orden = conf.get("orden", "").lower()
-    if orden in ("desc", "asc"):
-        puntos.sort(key=lambda p: p[1][-1], reverse=(orden == "desc"))
-    puntos = puntos[:int(conf.get("limite", 15))]
-    destacar = lista(conf.get("destacar", ""))
-    sin = [x for x in destacar if x not in [p[0] for p in puntos]]
-    if sin:
-        return None, [f"«destacar:» nombra {', '.join(sin)}, que no está entre las barras"]
-    ref = None
-    if conf.get("referencia"):
-        texto_ref, _, etiqueta = conf["referencia"].partition("·")
-        texto_ref = texto_ref.strip()
-        m = re.fullmatch(r"([A-Za-z_]\w*)\.([A-Za-z_]\w*)", texto_ref)
-        if m:
-            d = leer(m.group(1))
-            if d is None or m.group(2) not in d[0] or not d[1]:
-                return None, [f"«referencia:» {texto_ref} no existe o está vacío"]
-            valor = numero(d[1][0][d[0].index(m.group(2))])
-        else:
-            valor = numero(texto_ref.replace(".", "").replace(",", ".") if "," in texto_ref else texto_ref)
-        if valor is None:
-            return None, ["«referencia:» tiene que ser un número o modelo.columna"]
-        ref = (valor, etiqueta.strip())
-    leyenda = lista(conf.get("leyenda", "")) or series
-    if len(leyenda) != len(series):
-        return None, [f"«leyenda:» necesita {len(series)} nombres separados por comas, uno por columna"]
-    return {"titular": conf["titular"], "modelo": conf["modelo"], "cat": cat, "series": series, "leyenda": leyenda, "puntos": puntos,
-            "destacar": destacar, "ref": ref, "total": len(filas), "vacias": vacias}, []
+    return graficos.preparar(cuerpo, leer, formato)
 
 
 def grafico_html(cuerpo):
-    g, errores = preparar_grafico(cuerpo)
-    if errores:
-        return f'<p class="vacio">⚠️ Gráfico sin dibujar: {e("; ".join(errores))}</p>'
-    maximo = max([max(v) for _, v in g["puntos"]] + ([g["ref"][0]] if g["ref"] else []) + [0]) or 1
-    pct = lambda v: f"{max(v, 0) / maximo * 100:.1f}%"
-    doble = len(g["series"]) == 2
-    filas = []
-    for nombre, valores in g["puntos"]:
-        dest = nombre in g["destacar"]
-        if doble:
-            pista = "".join(f'<div class="g-pista fina"><div class="g-barra s{k}" style="width:{pct(v)}"></div></div>'
-                            for k, v in enumerate(valores))
-            pista = f'<div class="g-pistas">{pista}</div>'
-            valor = " → ".join(formato(v) for v in valores)
-        else:
-            clase = "destacada" if dest else ("gris" if g["destacar"] else "")
-            linea = f'<div class="g-ref" style="left:{pct(g["ref"][0])}"></div>' if g["ref"] else ""
-            pista = f'<div class="g-pista"><div class="g-barra {clase}" style="width:{pct(valores[0])}"></div>{linea}</div>'
-            valor = formato(valores[0])
-        filas.append(f'<div class="g-fila{" dest" if dest else ""}"><span class="g-etq">{e(nombre)}</span>{pista}'
-                     f'<span class="g-valor">{e(valor)}</span></div>')
-    extra = ""
-    if g["ref"] and not doble:
-        etiqueta = f'{formato(g["ref"][0])}' + (f' · {e(g["ref"][1])}' if g["ref"][1] else "")
-        extra = (f'<div class="g-fila"><span></span><div class="g-pista vacia"><span class="g-ref-etq" '
-                 f'style="left:{pct(g["ref"][0])}">{etiqueta}</span></div><span></span></div>')
-    leyenda = ""
-    if doble:
-        leyenda = ('<div class="g-leyenda">' + "".join(f'<span><i class="s{k}"></i>{e(s)}</span>' for k, s in enumerate(g["leyenda"]))
-                   + "</div>")
-    filtro = f" · se muestran {len(g['puntos'])} de {g['total']} filas" if len(g["puntos"]) < g["total"] else ""
-    if g["vacias"]:
-        filtro += f" ({g['vacias']} sin valor)"
-    pie = (f'Modelo <code>{e(g["modelo"])}</code> · {e(g["cat"])} → {e(", ".join(g["series"]))}{filtro} · '
-           'barras desde cero, leídas del lakehouse al generar esta web.')
-    return (f'<figure class="grafico"><figcaption>{e(g["titular"])}</figcaption>{leyenda}{"".join(filas)}{extra}'
-            f'<p class="g-fuente">{pie}</p></figure>')
+    return graficos.dibujar(cuerpo, leer, formato)[0]
 
 
 def cifras_html(cuerpo):
@@ -271,6 +147,9 @@ def leer_pagina(nombre):
     return texto, (not texto.strip()) or texto.lstrip().startswith(PENDIENTE)
 
 
+TIPOS_USADOS = set()
+
+
 def comprobar():
     errores = []
     for nombre, titulo in BITACORA + HISTORIA:
@@ -286,7 +165,9 @@ def comprobar():
                 linea = texto[:m.start()].count("\n") + 1
                 errores.append(f"paginas/{nombre}.md, línea {linea}: la marca {m.group(0)} no tiene valor: {motivo}")
         for inicio_bloque, cuerpo in bloques(texto, "grafico"):
-            _, fallos = preparar_grafico([MARCA.sub(lambda m: valor_marca(m)[0] or "", l) for l in cuerpo])
+            g, fallos = preparar_grafico([MARCA.sub(lambda m: valor_marca(m)[0] or "", l) for l in cuerpo])
+            if g and nombre in dict(HISTORIA):
+                TIPOS_USADOS.add(g["tipo"])
             errores += [f"paginas/{nombre}.md, gráfico de la línea {inicio_bloque}: {f}" for f in fallos]
         for inicio_bloque, cuerpo in bloques(texto, "cifras"):
             if not any("|" in l for l in cuerpo):
@@ -589,5 +470,9 @@ if __name__ == "__main__":
     todas = BITACORA + HISTORIA
     hechas = sum(1 for n, _ in todas if not leer_pagina(n)[1])
     print(f"✅ Páginas comprobadas: {hechas} de {len(todas)} escritas, sin líneas del guion ni marcas sin valor.")
+    if not leer_pagina("historia")[1] or not leer_pagina("historia-pasos")[1]:
+        tipos = ", ".join(sorted(TIPOS_USADOS)) or "ninguno"
+        aviso = "" if len(TIPOS_USADOS) >= 3 else " · la J7 pide al menos tres tipos distintos entre las dos páginas"
+        print(f"📊 Tipos de gráfico en tu historia: {tipos}{aviso}")
     if "--check" not in sys.argv:
         generar()

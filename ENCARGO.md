@@ -177,25 +177,24 @@ lakehouse quedarán agrupadas y plegadas en el menú.
    ya en el oro van en modelos nuevos `dbt/models/oro/historia_*.sql`, con sus tests en `_oro.yml`.
 5. **Paso 4 · El artefacto.** `paginas/historia.md`: un titular que afirma con una cifra con marca, la conclusión primero,
    uno o dos gráficos-mensaje, la propuesta con fecha, lo que no sabemos y tres titulares por audiencia.
-6. `python web/build.py --check` y `python web/build.py`; revisa `_site/index.html` con las cinco comprobaciones
+6. Entre las dos páginas, usa al menos tres tipos de gráfico distintos: cada uno, el que encaje con su mensaje.
+   `python web/build.py --check` y `python web/build.py` (te dice qué tipos llevas); revisa `_site/index.html` con las cinco comprobaciones
    (decisión, titular que afirma, fuente, evidencia diversa, lo que no cuadra). Pull request, verde, fusionas.
 
-> 🔎 **Pista · gráficos y cifras.** En cualquier página puedes dibujar un gráfico con los datos de tu oro, sin escribir
-> ninguna cifra a mano. Las barras empiezan siempre en cero y la fuente se escribe sola al pie:
+> 🔎 **Pista · cinco tipos de gráfico, uno por mensaje.** En cualquier página, un bloque ` ```grafico ` dibuja con los
+> datos de tu oro, sin escribir ninguna cifra a mano. Elige el tipo por lo que quieres decir:
 >
-> ````
-> ```grafico
-> titular: lo que el gráfico afirma (o describe, si es exploratorio)
-> modelo: pregunta_4
-> barras: columna_de_categorías → columna_numérica
-> destacar: la categoría protagonista
-> referencia: un número o modelo.columna · su etiqueta
-> ```
-> ````
+> | Tipo | Para decir… | Lo mínimo que lleva, además de `titular:` y `modelo:` |
+> |---|---|---|
+> | `barras` (por defecto) | quién está por encima de quién | `barras: categoría → columna` |
+> | `linea` | cómo evoluciona algo en el tiempo | `x: columna` · `y: columna` |
+> | `histograma` | cómo se reparte un valor: el caso típico y la cola | `columna: columna_numérica` |
+> | `calor` | un patrón en dos dimensiones (zona × hora, producto × día…) | `filas:` · `columnas:` · `valor:` |
+> | `eje` | cuánto engaña un eje cortado | `barras: categoría → columna` · `corte: número` |
 >
-> «destacar:», «referencia:», «solo:» (una lista de categorías), «orden: desc» y «leyenda:» son opcionales. Con dos columnas
-> numéricas («→ sin_limpiar, limpio») dibuja dos barras por categoría: sirve para el contraste. Y un bloque
-> ` ```cifras ` con líneas «cifra | qué es» dibuja tarjetas de cifras (el terreno del paso 2).
+> El README trae un ejemplo de cada uno y sus opcionales. Las barras y la línea empiezan siempre en cero, la media y
+> la mediana del histograma se calculan solas y el eje cortado nunca sale sin el honesto al lado. Un bloque
+> ` ```cifras ` con líneas «cifra | qué es» dibuja tarjetas de cifras.
 
 > 🔎 **Pista · explorar antes de explicar.** Los gráficos del paso 2 son exploratorios: sin «destacar:» y con un título
 > que describe. Mira si a simple vista destaca algo y, si no, divide la cifra por lo que corresponde (por plaza, por hora,

@@ -100,3 +100,33 @@ figure.grafico figcaption { font-weight:600; color:var(--navy); font-size:16px; 
 .cifra .v { font-size:26px; font-weight:700; color:var(--navy); font-variant-numeric:tabular-nums; }
 .cifra .t { font-size:13px; color:var(--grey); }
 @media (max-width:640px) { .g-fila { grid-template-columns:90px minmax(0,1fr) auto; } nav .desplegable { position:static; box-shadow:none; } }
+
+/* ── tipos de gráfico: línea, histograma, mapa de calor y eje ── */
+.g-svg { width:100%; height:auto; display:block; }
+.g-paneles { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:24px; }
+.g-panel { display:flex; flex-direction:column; gap:8px; min-width:0; }
+.g-panel-t { font-size:13px; font-weight:700; color:var(--navy); }
+.g-lectura { margin:0; font-size:14px; color:var(--ink); }
+.g-hist { position:relative; height:210px; margin-top:28px; border-bottom:1px solid #C3CCDD; }
+.g-hbarras { display:flex; align-items:flex-end; gap:2px; height:100%; }
+.g-hbar { flex:1; height:100%; display:flex; align-items:flex-end; }
+.g-hbar div { width:100%; background:var(--plata); border-radius:2px 2px 0 0; }
+.g-marca { position:absolute; top:-24px; bottom:0; border-left:2px solid var(--navy); }
+.g-marca.media { border-left-color:var(--teal); }
+.g-marca.p95 { top:0; border-left:2px dashed var(--muted); }
+.g-marca-t { position:absolute; font-size:12px; font-weight:700; white-space:nowrap; color:var(--navy); padding:0 6px; }
+.g-marca-t.media { color:var(--teal); }
+.g-marca-t.p95 { color:var(--grey); font-weight:400; }
+.g-marca-t.izq { transform:translateX(-100%); }
+.g-hejes { position:relative; height:18px; font-size:12px; color:var(--grey); }
+.g-hejes span { position:absolute; transform:translateX(-50%); white-space:nowrap; }
+.g-calor { display:flex; flex-direction:column; gap:3px; min-width:560px; }
+.g-cfila { display:grid; gap:3px; align-items:center; }
+.g-cfila .g-etq { font-size:13px; padding-right:8px; }
+.g-cfila.dest .g-etq { color:var(--ink); font-weight:700; }
+.g-ccol { font-size:12px; color:var(--grey); text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.g-celda { height:28px; border-radius:3px; display:flex; align-items:center; justify-content:center; font-size:12px; font-variant-numeric:tabular-nums; }
+.g-celda.vacia { background:repeating-linear-gradient(45deg,#F1F5FB,#F1F5FB 4px,#fff 4px,#fff 8px); }
+.g-escala { display:flex; gap:10px; align-items:center; font-size:12px; color:var(--grey); }
+.g-escala i { width:180px; height:10px; border-radius:2px; background:linear-gradient(90deg, rgb(241,245,251), rgb(30,39,97)); }
+@media (max-width:640px) { .g-paneles { grid-template-columns:minmax(0,1fr); } }

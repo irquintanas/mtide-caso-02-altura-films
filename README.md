@@ -87,7 +87,8 @@ línea del guion o una marca sin valor, y GitHub hará lo mismo con tu pull requ
 
 ## Gráficos y cifras (bloque 5)
 
-En cualquier página, un bloque `grafico` dibuja barras con los datos de un modelo, desde cero y con la fuente al pie:
+En cualquier página, un bloque `grafico` dibuja con los datos de un modelo, con la fuente al pie. Todos llevan
+`titular:` y `modelo:`; el `tipo:` dice qué gráfico es (si no lo pones, `barras`). Los valores entre corchetes son tuyos:
 
 ````markdown
 ```grafico
@@ -97,12 +98,46 @@ barras: [columna de categorías] → [columna numérica]
 destacar: [la categoría protagonista]
 referencia: [un número o modelo.columna] · [su etiqueta]
 ```
+
+```grafico
+tipo: linea
+titular: [cómo evoluciona]
+modelo: [modelo con una fila por fecha u hora]
+x: [columna de fecha u hora]
+y: [columna numérica]
+```
+
+```grafico
+tipo: histograma
+titular: [cómo se reparte]
+modelo: [un modelo con una fila por operación, por ejemplo tu hecho]
+columna: [columna numérica]
+```
+
+```grafico
+tipo: calor
+titular: [el patrón]
+modelo: [modelo con una fila por cada par fila × columna]
+filas: [columna]
+columnas: [columna]
+valor: [columna numérica]
+```
+
+```grafico
+tipo: eje
+titular: Mismos datos, dos lecturas: el eje manda
+modelo: pregunta_4
+barras: [columna de categorías] → [columna numérica]
+corte: [número por debajo de todos los valores]
+```
 ````
 
-Opcionales: `destacar:`, `referencia:` (un número o `modelo.columna`), `solo:` (lista de categorías), `orden: desc`
-y, con dos columnas, `leyenda:` (un nombre para cada una).
-Con dos columnas (`barras: categoría → sin_limpiar, limpio`) dibuja dos barras por categoría. Un bloque `cifras`
-con líneas `cifra | qué es` dibuja tarjetas; las cifras pueden ser marcas (`{{ stg_eventos.filas }} | eventos`).
+Opcionales: en `barras`, `destacar:`, `referencia:`, `solo:` (lista de categorías), `orden: desc` y, con dos columnas
+(`barras: categoría → sin_limpiar, limpio`), `leyenda:`. En `linea`, `destacar:` (un valor de `x` que se anota),
+`referencia:` y una segunda columna en `y:`. En `histograma`, `tramo:` (el ancho de cada barra), `escala: log` y
+`marcas:` (media, mediana, p95). En `calor`, `normalizar: fila` (cada fila frente a su propia media), `destacar:` y
+`orden: desc`. Un bloque `cifras` con líneas `cifra | qué es` dibuja tarjetas; las cifras pueden ser marcas
+(`{{ stg_parte.filas }} | partes`). `python web/build.py` te dice qué tipos llevas en tu historia.
 
 ## Si algo falla
 
