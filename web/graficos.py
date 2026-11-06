@@ -224,20 +224,23 @@ def preparar(cuerpo, leer, formato):
         if any(v is None for v in valores):
             return None, [f"{conf['modelo']}: la columna {c} tiene valores que no son números"]
         log = conf.get("escala", "").lower() == "log"
-        excluidos = 0
-        if log:
-            excluidos = sum(1 for v in valores if v <= 0)
-            valores = [v for v in valores if v > 0]
         if len(valores) < 5:
             return None, ["un histograma necesita al menos cinco valores"]
-        orden = sorted(valores)
-        n = len(orden)
+        todos = sorted(valores)   # la media, la mediana y el p95 se calculan con todos, también con los ≤ 0
+        n = len(todos)
 
         def cuantil(q):
             pos = q * (n - 1)
             i = int(pos)
-            return orden[i] + (orden[min(i + 1, n - 1)] - orden[i]) * (pos - i)
-        marcas = {"media": sum(orden) / n, "mediana": cuantil(0.5), "p95": cuantil(0.95)}
+            return todos[i] + (todos[min(i + 1, n - 1)] - todos[i]) * (pos - i)
+        marcas = {"media": sum(todos) / n, "mediana": cuantil(0.5), "p95": cuantil(0.95)}
+        excluidos = 0
+        orden = todos
+        if log:   # la escala logarítmica solo puede dibujar las barras de los valores positivos
+            orden = [v for v in todos if v > 0]
+            excluidos = n - len(orden)
+            if len(orden) < 5:
+                return None, ["con «escala: log» quedan menos de cinco valores positivos: quita la escala"]
         pedidas = lista(conf.get("marcas", "media, mediana, p95"))
         malas = [m for m in pedidas if m not in marcas]
         if malas:
@@ -400,8 +403,10 @@ def html_linea(g, formato):
         t += paso
     cada = max(1, math.ceil(n / 12))
     for i, et in enumerate(g["etiquetas"]):
-        if i % cada == 0 or i == n - 1:
-            ancla = "start" if i == 0 else "end" if i == n - 1 else "middle"   # los extremos no se salen del lienzo
+        # una etiqueta de cada «cada»; la última siempre, y sin la anterior si quedaría pegada a ella
+        if (i % cada == 0 and (n - 1 - i >= cada or i == n - 1)) or i == n - 1:
+            ancho = 3.4 * len(et)   # media etiqueta, aproximada
+            ancla = "start" if i == 0 and ancho > L - 4 else "end" if i == n - 1 and ancho > R - 4 else "middle"
             partes.append(f'<text x="{X(i):.1f}" y="{H - B + 20}" text-anchor="{ancla}" font-size="12" fill="#4A5470">{e(et)}</text>')
     colores = ["#1E2761", "#0F766E"]
     for s in range(len(g["series"])):
@@ -440,13 +445,15 @@ def html_linea(g, formato):
 def html_histograma(g, formato):
     bordes, cuentas, log = g["bordes"], g["cuentas"], g["log"]
     lo, hi = bordes[0], bordes[-1]
-    pos = (lambda v: (math.log10(v) - math.log10(lo)) / (math.log10(hi) - math.log10(lo))) if log else (lambda v: (v - lo) / (hi - lo))
+    bruto = (lambda v: (math.log10(v) - math.log10(lo)) / (math.log10(hi) - math.log10(lo))) if log else (lambda v: (v - lo) / (hi - lo))
+    pos = lambda v: min(1.0, max(0.0, bruto(v)))
     tope = max(cuentas) or 1
     barras = "".join(f'<div class="g-hbar" title="{e(formato(a))} – {e(formato(b))}: {c}"><div style="height:{c / tope * 100:.1f}%"></div></div>'
                      for a, b, c in zip(bordes, bordes[1:], cuentas))
     nombres = {"media": "media", "mediana": "mediana", "p95": "p95"}
     marcas = []
-    orden = sorted(g["marcas"].items(), key=lambda kv: kv[1])
+    sin_dibujo = [m for m, v in g["marcas"].items() if log and v <= 0]   # una marca ≤ 0 no cabe en escala log
+    orden = sorted(((m, v) for m, v in g["marcas"].items() if m not in sin_dibujo), key=lambda kv: kv[1])
     for k, (m, v) in enumerate(orden):
         lado = "izq" if k == 0 and len(orden) > 1 else "der"
         marcas.append(f'<div class="g-marca {m}" style="left:{pos(v) * 100:.1f}%"></div>'
@@ -463,6 +470,8 @@ def html_histograma(g, formato):
     escala = "escala logarítmica" if log else f"tramos de {formato(g['tramo'])}"
     fuera = f" · {g['excluidos']} valores ≤ 0 fuera de la escala logarítmica" if g["excluidos"] else ""
     calc = ", ".join(nombres[m] for m in g["marcas"])
+    if sin_dibujo:
+        fuera += " · " + ", ".join(f"{nombres[m]} {formato(g['marcas'][m])}" for m in sin_dibujo) + " (≤ 0, sin línea)"
     return (f'<figure class="grafico">{cabecera(g)}<div class="g-hist"><div class="g-hbarras">{barras}</div>{"".join(marcas)}</div>'
             f'<div class="g-hejes">{ejes}</div>'
             + pie(g, f'columna {e(g["columna"])} · {formato(g["n"])} valores · {escala}{fuera} · {calc} calculadas con todos los valores.')

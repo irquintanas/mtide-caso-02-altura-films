@@ -20,6 +20,7 @@ el README) y ```cifras (líneas «cifra | qué es»). Los gráficos leen los dat
 escribe a mano.
 """
 import html
+from decimal import Decimal
 import json
 import os
 import re
@@ -81,6 +82,8 @@ def formato(v):
         return "—"
     if isinstance(v, bool):
         return "sí" if v else "no"
+    if isinstance(v, Decimal):   # las columnas DECIMAL de DuckDB llegan así: se formatean como cualquier número
+        v = int(v) if v == v.to_integral_value() else float(v)
     if isinstance(v, int):
         return f"{v:,}".replace(",", ".")
     if isinstance(v, float):
