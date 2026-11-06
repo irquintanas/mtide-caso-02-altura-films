@@ -161,12 +161,13 @@ Escribe `paginas/memo.md`: el memo para la dirección de Altura Films, con las c
 > abre tu URL de GitHub Pages y comprueba que la bitácora está completa, que las cuatro preguntas tienen
 > respuesta y que funciona el enlace a la documentación de dbt («Cómo está montado»).
 
-## Bloque 5 · La historia · rama `historia` (Jornada 7)
+## Jornada 7 · La historia · rama `historia`
 
-Tu portal es ahora un **informe**: cifras correctas, pero nadie sabe qué hacer con ellas. En este bloque lo conviertes en
-una **historia** para la dirección de Altura Films, con los cuatro pasos de la J7: decidir, analizar, elegir los datos y construir
-el artefacto. Cuando `paginas/historia.md` deje de estar pendiente, será la portada de tu portal, y las páginas del
-lakehouse quedarán agrupadas y plegadas en el menú.
+Tu portal es ahora un **informe**: cifras correctas, pero nadie sabe qué hacer con ellas. En esta práctica lo conviertes
+en una **historia** para la dirección de Altura Films, con los cuatro pasos de la presentación «Del dato a la decisión»: decidir,
+analizar, elegir los datos y construir el artefacto. Cuando `paginas/historia.md` deje de estar pendiente, será la portada
+de tu portal, y las páginas del lakehouse quedarán agrupadas y plegadas en el menú. La guía del alumno de la Jornada 7
+lo explica paso a paso, con un ejemplo resuelto.
 
 1. `git switch -c historia`.
 2. **Paso 1 · Decidir.** En `paginas/historia-pasos.md`: tema → pregunta → decisión, con quién decide, para cuándo y qué
@@ -197,13 +198,15 @@ lakehouse quedarán agrupadas y plegadas en el menú.
 > ` ```cifras ` con líneas «cifra | qué es» dibuja tarjetas de cifras.
 
 > 🔎 **Pista · explorar antes de explicar.** Los gráficos del paso 2 son exploratorios: sin «destacar:» y con un título
-> que describe. Mira si a simple vista destaca algo y, si no, divide la cifra por lo que corresponde (por plaza, por hora,
-> por euro…): ahí suele aparecer el disparador. El gráfico de la portada es ese mismo convertido en gráfico-mensaje:
-> la protagonista destacada, el resto en gris y un titular que afirma. Y si tu bloque 3 tenía trampa, el contraste
-> «sin limpiar frente a limpio» demuestra que tu conclusión no sale de un error de datos.
+> que describe. Mira si a simple vista destaca algo y, si no, divide la cifra por lo que corresponde (por unidad de
+> capacidad, por hora, por euro…): ahí suele aparecer el disparador. El gráfico de la portada es ese mismo convertido en
+> gráfico-mensaje: la protagonista destacada, el resto en gris y un titular que afirma. Y si al limpiar tus datos
+> corregiste algo que cambiaba las cifras, el contraste «sin limpiar frente a limpio» demuestra que tu conclusión no
+> sale de un error de datos.
 
-> 🔎 **Pista · el titular.** Léelo sin gráficos: si no dice qué hacer, todavía describe. «Pedidos por zona» describe;
-> «La zona norte necesita el doble de repartidores» afirma. `--check` exige que el titular lleve al menos una cifra con marca.
+> 🔎 **Pista · el titular.** Léelo sin gráficos: si no dice qué hacer, todavía describe. «Ventas por familia» describe;
+> «1 de cada 4 € de Vinos se vende en noviembre y diciembre» afirma. `--check` exige que el titular lleve al menos una
+> cifra con marca.
 
 ---
 
@@ -211,5 +214,5 @@ lakehouse quedarán agrupadas y plegadas en el menú.
 
 - Tu repositorio en tu cuenta, con los cuatro pull requests fusionados y la última ejecución de `main` en verde.
 - Tu portal publicado, con sus cuatro páginas escritas, y tu `dbt-docs`.
-- Bloque 5 (J7): tu historia como portada del portal y la página «Cómo se construyó la historia».
+- Jornada 7 · La historia: tu historia como portada del portal y la página «Cómo se construyó la historia».
 - La presentación oral (5 minutos): con tu portal en pantalla, el problema de calidad, tu test protagonista, las cuatro respuestas y tu recomendación.

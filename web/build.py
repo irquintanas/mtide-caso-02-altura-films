@@ -13,7 +13,7 @@ Una página que todavía empieza por la línea <!-- pendiente … --> sale en el
 comprueba. En cuanto borras esa línea, la comprobación exige que no quede ninguna línea del guion («> ✏️ …»)
 y que todas sus marcas tengan valor.
 
-Bloque 5 (la historia): paginas/historia.md pasa a ser la portada en cuanto deja de estar pendiente, y las
+Jornada 7 · La historia: paginas/historia.md pasa a ser la portada en cuanto deja de estar pendiente, y las
 páginas del ejercicio del lakehouse quedan agrupadas y plegadas. En cualquier página puedes usar dos bloques:
 ```grafico (cinco tipos: barras, linea, histograma, calor y eje; cómo se escribe cada uno, en web/graficos.py y en
 el README) y ```cifras (líneas «cifra | qué es»). Los gráficos leen los datos del lakehouse: ninguna cifra se
@@ -381,7 +381,7 @@ def inicio():
 <section><h2>Las cuatro preguntas de la dirección</h2><div class="rejilla">{''.join(tarjetas)}</div>
 <p class="nota">Cada respuesta es la primera fila de su modelo de oro, leída del lakehouse al generar esta web.</p></section>
 <section><h2>Bitácora del equipo de datos</h2>{lista_estados(BITACORA)}</section>
-<section><h2>Bloque 5 · La historia</h2>{lista_estados(HISTORIA)}
+<section><h2>Jornada 7 · La historia</h2>{lista_estados(HISTORIA)}
 <p class="nota">Cuando escribas <code>paginas/historia.md</code>, tu historia pasará a ser la portada de este portal.</p></section>"""
 
 

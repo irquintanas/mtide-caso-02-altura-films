@@ -17,7 +17,7 @@ La portada cuenta el destino. Aquí queda el viaje: la decisión que hay detrás
 ## Paso 3 · Qué datos entran y cuáles se quedan fuera
 
 > ✏️ Una tabla «dato candidato | ¿pasa el filtro? | dónde se usa». El criterio no es si interesa, sino si cambia la decisión.
-> ✏️ El contraste sin limpiar frente a limpio, si tu bloque 3 tenía trampa: ¿aguanta la conclusión? Y un «tipo: eje» con una comparación tuya, para ver cuánto engañaría un eje cortado.
+> ✏️ El contraste sin limpiar frente a limpio, si al limpiar tus datos corregiste algo que cambiaba las cifras: ¿aguanta la conclusión? Y un «tipo: eje» con una comparación tuya, para ver cuánto engañaría un eje cortado.
 > ✏️ El alcance: de dónde salen los datos, qué periodo cubren y qué se ha quitado, con cifras con marca.
 
 ## Las cinco comprobaciones

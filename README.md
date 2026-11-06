@@ -85,7 +85,7 @@ Una página que empieza por `<!-- pendiente … -->` sale como «pendiente» y n
 borra esa línea y sustituye cada línea del guion (`> ✏️ …`) por tu texto. `python web/build.py` falla si queda alguna
 línea del guion o una marca sin valor, y GitHub hará lo mismo con tu pull request.
 
-## Gráficos y cifras (bloque 5)
+## Gráficos y cifras (Jornada 7 · La historia)
 
 En cualquier página, un bloque `grafico` dibuja con los datos de un modelo, con la fuente al pie. Todos llevan
 `titular:` y `modelo:`; el `tipo:` dice qué gráfico es (si no lo pones, `barras`). Los valores entre corchetes son tuyos:
