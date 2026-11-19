@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
-"""Genera el «Init SQL» para conectar Metabase al lakehouse con DuckDB.
+"""Genera el «Init SQL» para conectar Metabase (en Docker) al lakehouse con DuckDB.
 
-    python metabase/init_sql.py                    # Metabase en Docker: el lakehouse montado en /datos
-    python metabase/init_sql.py --ruta "$PWD/lakehouse"   # Metabase sin Docker (app de Mac o metabase.jar)
+    python metabase/init_sql.py
+
+Metabase corre en Docker con la carpeta que contiene tus repositorios montada en /datos
+(-v "$PWD:/datos" al arrancar el contenedor desde esa carpeta). Por eso el lakehouse de este repositorio está, para
+Metabase, en /datos/<nombre-de-este-repositorio>/lakehouse: el script lo calcula solo. Si lo montaste de otra forma,
+indica la ruta tal y como la ve el contenedor con --ruta.
 
 Escribe metabase/init.sql y lo muestra por pantalla: es lo que se pega en el campo «Init SQL» de la conexión DuckDB.
 Crea una vista por cada fichero Parquet de lakehouse/oro y lakehouse/plata, en los esquemas «oro» y «plata»,
@@ -36,8 +40,9 @@ def init_sql(ruta):
 
 def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--ruta", default="/datos",
-                   help="carpeta del lakehouse tal y como la ve Metabase (por defecto /datos, la de Docker)")
+    por_defecto = f"/datos/{RAIZ.name}/lakehouse"
+    p.add_argument("--ruta", default=por_defecto,
+                   help=f"carpeta del lakehouse tal y como la ve el contenedor de Metabase (por defecto {por_defecto})")
     args = p.parse_args()
     if not any((LAKE / c).glob("*.parquet") for c in CAPAS):
         raise SystemExit("No hay Parquet en lakehouse/oro ni en lakehouse/plata: ejecuta antes "
