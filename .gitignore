@@ -12,3 +12,4 @@ lakehouse/caso.duckdb*
 dbt/target/
 dbt/logs/
 dbt/.user.yml
+metabase/init.sql

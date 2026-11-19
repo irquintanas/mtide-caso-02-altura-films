@@ -69,6 +69,7 @@ ejecución verás un resumen del lakehouse y, en *Artifacts*, un zip con plata y
 | `paginas/` | Las páginas del portal que escribes tú (Markdown) |
 | `web/build.py` | Comprueba tus páginas y genera el portal en `_site/`, con las cifras leídas del oro |
 | `bi/resumen.py` | El resumen que aparece en cada ejecución de Actions |
+| `metabase/` | Conectar Metabase a tu oro y tu plata con DuckDB (`init_sql.py` genera el Init SQL) |
 | `.github/workflows/publicar.yml` | Comprobar en cada pull request; publicar en cada cambio de `main` |
 
 ## Las cifras de tus páginas
@@ -138,6 +139,13 @@ Opcionales: en `barras`, `destacar:`, `referencia:`, `solo:` (lista de categorí
 `marcas:` (media, mediana, p95). En `calor`, `normalizar: fila` (cada fila frente a su propia media), `destacar:` y
 `orden: desc`. Un bloque `cifras` con líneas `cifra | qué es` dibuja tarjetas; las cifras pueden ser marcas
 (`{{ stg_parte.filas }} | partes`). `python web/build.py` te dice qué tipos llevas en tu historia.
+
+## Metabase: tu oro en una herramienta de BI
+
+`metabase/` conecta Metabase a tu lakehouse con una base DuckDB en memoria, sin copiar los datos ni bloquear
+`dbt build`. `python metabase/init_sql.py` escribe el Init SQL de la conexión y `metabase/README.md` explica la
+instalación y los pasos. La cifra de control: una de tus `pregunta_N`, rehecha en Metabase desde `fact_…`, tiene que dar
+lo mismo que en tu portal.
 
 ## Si algo falla
 
